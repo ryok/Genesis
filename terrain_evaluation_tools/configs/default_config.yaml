@@ -1,0 +1,109 @@
+# 地形評価ツール デフォルト設定
+
+# 地形設定
+terrain:
+  types:
+    steps:
+      name: "段差"
+      heights: {1: 5.0, 2: 10.0, 3: 15.0}  # cm
+      descriptions: {1: "低い段差 (5cm)", 2: "中程度の段差 (10cm)", 3: "高い段差 (15cm)"}
+    slopes:
+      name: "傾斜"
+      angles: {1: 6, 2: 11, 3: 17}  # 度
+      descriptions: {1: "緩やかな傾斜 (6度)", 2: "中程度の傾斜 (11度)", 3: "急な傾斜 (17度)"}
+  
+  # 地形生成パラメータ
+  generation:
+    grid_size: [48, 48]           # グリッドサイズ
+    horizontal_scale: 0.25        # 水平スケール (m/グリッド)
+    vertical_scale: 0.01          # 垂直スケール (m/単位)
+    step_width: 8                 # 段差の幅 (グリッド数)
+
+# ロボット設定
+robot:
+  model: "urdf/go2/urdf/go2.urdf"
+  initial_position: [0.0, 0.0, 0.5]
+  initial_orientation: [0.0, 0.0, 0.0, 1.0]
+  
+  # PD制御パラメータ
+  control:
+    kp: 20.0                      # 位置ゲイン
+    kv: 0.5                       # 速度ゲイン
+    
+  # 関節名
+  joint_names:
+    - "FR_hip_joint"
+    - "FR_thigh_joint"
+    - "FR_calf_joint"
+    - "FL_hip_joint"
+    - "FL_thigh_joint"
+    - "FL_calf_joint"
+    - "RR_hip_joint"
+    - "RR_thigh_joint"
+    - "RR_calf_joint"
+    - "RL_hip_joint"
+    - "RL_thigh_joint"
+    - "RL_calf_joint"
+
+# シミュレーション設定
+simulation:
+  dt: 0.02                        # タイムステップ
+  substeps: 2                     # サブステップ数
+  max_steps: 2000                 # 最大ステップ数
+  success_distance: 8.0           # 成功判定距離 (m)
+  failure_height: 0.2             # 失敗判定高さ (m)
+
+# ポリシー設定
+policy:
+  input_dim: 45                   # 観測次元数
+  output_dim: 12                  # 行動次元数
+  network_architecture: [512, 256, 128]  # ネットワーク構造
+  action_clamp: [-1.0, 1.0]       # 行動クランプ範囲
+
+# 動画記録設定
+recording:
+  resolution: [1280, 720]         # 解像度
+  fps: 30                         # フレームレート
+  camera:
+    position: [4.0, 4.0, 3.0]     # カメラ位置
+    lookat: [0.0, 0.0, 0.5]       # 注視点
+    fov: 45                       # 視野角
+
+# 評価設定
+evaluation:
+  metrics:
+    - "success_rate"              # 成功率
+    - "distance_traveled"         # 移動距離
+    - "survival_time"             # 生存時間
+    - "max_height"                # 最大高さ
+    - "min_height"                # 最小高さ
+  
+  # 進行状況表示間隔
+  progress_interval: 200          # ステップ
+
+# 出力設定
+output:
+  base_dir: "outputs"
+  subdirs:
+    videos: "videos"
+    reports: "reports"
+    data: "data"
+  
+  # ファイル命名規則
+  naming:
+    video: "{terrain}_{difficulty}_{timestamp}.mp4"
+    report: "evaluation_report_{date}.md"
+    data: "results_{terrain}_{difficulty}_{timestamp}.json"
+
+# Genesis設定
+genesis:
+  seed: 42
+  backend: "gpu"                  # gpu, cpu, vulkan, metal
+  precision: "32"
+  logging_level: "warning"
+
+# デバッグ設定
+debug:
+  verbose: false                  # 詳細出力
+  save_intermediate: false       # 中間結果保存
+  visualize_terrain_stats: true  # 地形統計表示
